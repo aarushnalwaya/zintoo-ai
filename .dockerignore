@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+runtime/
+data/fashion-dataset/
+data/fashion-dataset-resized/
+data/manifests/
+models_artifacts/*.pt
+notebooks/
+.git/
+.env
+*.zip

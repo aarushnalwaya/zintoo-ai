@@ -1,0 +1,39 @@
+# Render blueprint for Zintoo AI (v2)
+# One-click: push to GitHub, then "New + > Blueprint" on Render and point at this repo.
+services:
+  - type: web
+    name: zintoo-ai
+    runtime: python
+    plan: free                      # fits in 512 MB; no ML deps loaded
+    buildCommand: pip install -r requirements.txt
+    # 1 worker: SSE/WebSocket fan-out + in-process SQLite/event-bus state must
+    # live in a single process on the free tier (no shared memory across workers).
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 65
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.4"
+      - key: ZINTOO_ENV
+        value: production
+      - key: ZINTOO_JSON_LOGS
+        value: "true"
+      - key: ZINTOO_SECRET_KEY
+        generateValue: true          # Render generates a strong secret once
+      - key: ZINTOO_DATA_DIR
+        value: /var/data           # attach a disk below to persist state
+      # Vision (image classification + visual search). OFF by default:
+      # onnxruntime + model add ~150-250 MB RSS, which is marginal on the
+      # 512 MB free plan. Enable only on an instance with >=1 GB RAM, and
+      # commit models_artifacts/ (~12 MB). See VISION.md section 9.
+      - key: ZINTOO_VISION_ENABLED
+        value: "false"
+      - key: ZINTOO_VISION_THREADS
+        value: "1"
+    # OPTIONAL persistent state (paid plans support disks). Uncomment to keep
+    # transfers/orchestration history across redeploys. Free tier: state is
+    # ephemeral but the DB re-seeds itself deterministically on every boot.
+    # disk:
+    #   name: zintoo-data
+    #   mountPath: /var/data
+    #   sizeGB: 1

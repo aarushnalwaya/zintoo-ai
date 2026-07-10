@@ -1,0 +1,18 @@
+# ==========================================================
+# Zintoo AI — Production SERVING dependencies
+# Everything here must fit a small instance. No torch.
+# Vision inference uses onnxruntime (~50 MB) instead of
+# torch (~800 MB on disk, ~300 MB RSS just to import).
+# Training deps live in requirements-train.txt (offline only).
+# ==========================================================
+fastapi>=0.110.0,<0.116.0
+uvicorn[standard]>=0.27.0,<0.31.0   # websockets + uvloop + httptools
+python-multipart>=0.0.9             # multipart parsing for image upload
+pydantic>=2.6.0,<3.0.0
+
+# --- Vision inference (optional; set ZINTOO_VISION_ENABLED=true) ---
+# Adds roughly 150-250 MB RSS. Comment these two out to deploy the
+# text-only build on a memory-constrained free instance.
+onnxruntime>=1.17.0,<2.0.0
+Pillow>=10.2.0
+numpy>=1.26.0,<3.0.0

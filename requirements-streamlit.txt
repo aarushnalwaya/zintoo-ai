@@ -1,0 +1,4 @@
+# Thin Streamlit CLIENT only. It calls the deployed FastAPI backend over HTTP.
+# It does NOT load the model — no onnxruntime, no numpy, no torch here.
+streamlit>=1.32.0
+requests>=2.31.0

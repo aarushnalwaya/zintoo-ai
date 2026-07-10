@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+runtime/
+*.db
+*.db-wal
+*.db-shm
+outputs/logs/*.json
+.DS_Store
+
+# Vision: never commit the dataset or training checkpoints
+data/fashion-dataset/
+data/manifests/
+models_artifacts/*.pt        # best.pt / last.pt — checkpoints, not needed to serve
+*.onnx.data

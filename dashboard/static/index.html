@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZintooAI — Intelligence Dashboard</title>
+  <meta name="description" content="AI-Powered Hyper-Local Fashion Intelligence Platform — Real-time recommendations, demand forecasting, and autonomous inventory orchestration">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-bg-effects">
+      <div class="login-orb login-orb-1"></div>
+      <div class="login-orb login-orb-2"></div>
+      <div class="login-orb login-orb-3"></div>
+    </div>
+
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-brand">
+          <div class="login-brand-icon">⚡</div>
+          <h1>Zintoo<span>AI</span></h1>
+          <p>AI-Powered Fashion Intelligence Platform</p>
+        </div>
+
+        <form id="login-form" autocomplete="off">
+          <div class="login-field">
+            <label for="login-email">Email Address</label>
+            <div class="login-input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 7l-10 7L2 7"></path></svg>
+              <input type="email" id="login-email" placeholder="admin@zintoo.ai" required>
+            </div>
+          </div>
+
+          <div class="login-field">
+            <label for="login-password">Password</label>
+            <div class="login-input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+              <input type="password" id="login-password" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <div class="login-options">
+            <label class="login-remember">
+              <input type="checkbox" id="login-remember" checked>
+              <span>Remember me</span>
+            </label>
+            <a href="#" class="login-forgot">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="login-btn" id="login-btn">
+            <span>Sign In</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+          </button>
+
+          <div class="login-error" id="login-error"></div>
+        </form>
+
+        <div class="login-footer">
+          <p>Default credentials: <code>admin@zintoo.ai</code> / <code>admin123</code></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MAIN APP (hidden until login) ═══════════════ -->
+  <div class="app-layout" id="app-layout" style="display: none;">
+
+    <!-- ═══════════════ SIDEBAR ═══════════════ -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">Zintoo<span>AI</span></div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+        <div class="nav-item active" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          Dashboard
+        </div>
+        <div class="nav-item" data-page="ai-discovery">
+          <i data-lucide="sparkles"></i>
+          AI Discovery
+        </div>
+        <div class="nav-item" data-page="demand-forecasts">
+          <i data-lucide="trending-up"></i>
+          Demand Forecasts
+        </div>
+
+        <div class="nav-section-label">Operations</div>
+        <div class="nav-item" data-page="inventory">
+          <i data-lucide="package"></i>
+          Inventory
+        </div>
+        <div class="nav-item" data-page="auto-restock">
+          <i data-lucide="refresh-cw"></i>
+          Auto-Restock
+          <div class="badge-toggle"></div>
+        </div>
+        <div class="nav-item" data-page="agent">
+          <i data-lucide="bot"></i>
+          Agent
+          <span class="badge badge-live">Live</span>
+        </div>
+
+        <div class="nav-section-label">System</div>
+        <div class="nav-item" data-page="settings">
+          <i data-lucide="settings"></i>
+          Settings
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="api-status">
+          <div class="api-dot"></div>
+          <div>
+            <div>API Connected</div>
+            <small>Backend: http://localhost:8000</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+    <div class="main-content">
+
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" placeholder="Search products, SKUs, pincodes..." id="global-search">
+        </div>
+        <div class="user-profile">
+          <div class="user-info">
+            <div class="user-name">System Admin</div>
+            <div class="user-role">Owner</div>
+          </div>
+          <div class="user-avatar" onclick="logout()" title="Click to logout" style="cursor:pointer;">SA</div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="page-content">
+
+        <!-- ═══════════ PAGE: DASHBOARD ═══════════ -->
+        <section id="page-dashboard" class="page active">
+          <div class="page-header">
+            <div>
+              <h1>Intelligence Overview</h1>
+              <p class="subtitle">Real-time AI metrics, forecasting &amp; orchestration status</p>
+            </div>
+            <div class="actions">
+              <button class="btn btn-secondary" id="btn-export"><i data-lucide="download"></i> Export</button>
+              <button class="btn btn-primary" id="btn-optimize"><i data-lucide="zap"></i> Optimize Now</button>
+            </div>
+          </div>
+
+          <!-- Metric Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card" style="--accent-color: var(--cyan)">
+              <div class="metric-icon cyan">📦</div>
+              <div class="metric-label">Active Products</div>
+              <div class="metric-value" id="metric-products">12,408</div>
+              <div class="metric-change positive">✓ Embeddings synced</div>
+            </div>
+            <div class="metric-card" style="--accent-color: var(--green)">
+              <div class="metric-icon green">📈</div>
+              <div class="metric-label">Predicted Demand (24h)</div>
+              <div class="metric-value" id="metric-demand">29</div>
+              <div class="metric-change positive">↑ +12.5% vs yesterday</div>
+            </div>
+            <div class="metric-card" style="--accent-color: var(--purple)">
+              <div class="metric-icon purple">🔄</div>
+              <div class="metric-label">Auto-Reallocations</div>
+              <div class="metric-value" id="metric-reallocations">19</div>
+              <div class="metric-change info">97% SLA</div>
+            </div>
+            <div class="metric-card" style="--accent-color: var(--orange)">
+              <div class="metric-icon orange">🎯</div>
+              <div class="metric-label">Recommendation NDCG</div>
+              <div class="metric-value" id="metric-ndcg">0.66</div>
+              <div class="metric-change positive">↑ High accuracy</div>
+            </div>
+          </div>
+
+          <!-- Chart + Agent Feed Row -->
+          <div class="dashboard-row">
+            <!-- Demand Trend Chart -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i data-lucide="activity"></i> Demand Trend (48h)</h3>
+                <div class="chart-controls">
+                  <select class="chart-select" id="trend-sku-select">
+                    <option value="KURTA_001_M_BLU">KURTA_001_M_BLU</option>
+                    <option value="SHIRT_042_L_WHT">SHIRT_042_L_WHT</option>
+                    <option value="DRESS_015_S_RED">DRESS_015_S_RED</option>
+                    <option value="JEANS_007_M_IND">JEANS_007_M_IND</option>
+                  </select>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart-container">
+                  <canvas id="demand-trend-chart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent Feed -->
+            <div class="card">
+              <div class="card-header">
+                <h3><i data-lucide="radio"></i> Agent Feed</h3>
+                <span class="live-badge">Live</span>
+              </div>
+              <div class="agent-feed" id="agent-feed">
+                <!-- Feed entries added by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Orders -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i data-lucide="shopping-bag"></i> Recent Orders</h3>
+              <span class="view-all-link">View All →</span>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <table class="data-table" id="orders-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-tbody">
+                  <!-- Rows added by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════ PAGE: AI DISCOVERY ═══════════ -->
+        <section id="page-ai-discovery" class="page">
+          <div class="page-header">
+            <div>
+              <h1>AI Discovery</h1>
+              <p class="subtitle">Multimodal fashion recommendations powered by FashionCLIP</p>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group" style="flex: 1;">
+                  <label>Search Query</label>
+                  <input type="text" class="form-control" id="rec-query" placeholder="e.g. casual kurta for college fest, blue shirt for men...">
+                </div>
+                <div class="form-group">
+                  <label>Results</label>
+                  <select class="form-control" id="rec-topk" style="min-width: 80px;">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Gender</label>
+                  <select class="form-control" id="rec-gender" style="min-width: 100px;">
+                    <option value="">All</option>
+                    <option>Men</option>
+                    <option>Women</option>
+                    <option>Unisex</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary" id="btn-recommend" style="margin-bottom: 0;"><i data-lucide="search"></i> Discover</button>
+              </div>
+
+              <div class="upload-zone" id="image-upload-zone">
+                <i data-lucide="image-plus" style="width:32px;height:32px;display:block;margin:0 auto 8px;"></i>
+                <p>Drop an outfit image here or click to upload</p>
+                <small>Supports JPG, PNG · Max 8MB</small>
+                <input type="file" accept="image/*" id="rec-image-input" style="display:none;">
+              </div>
+            </div>
+          </div>
+
+          <div id="rec-results-status" style="margin-bottom: 16px;"></div>
+          <div class="product-grid" id="recommendation-results">
+            <!-- Product cards added by JS -->
+          </div>
+        </section>
+
+        <!-- ═══════════ PAGE: DEMAND FORECASTS ═══════════ -->
+        <section id="page-demand-forecasts" class="page">
+          <div class="page-header">
+            <div>
+              <h1>Demand Forecasts</h1>
+              <p class="subtitle">Hyper-local hourly SKU-level demand prediction with 95% confidence intervals</p>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Product SKU</label>
+                  <select class="form-control" id="fc-sku">
+                    <option>KURTA_001_M_BLU</option>
+                    <option>SHIRT_042_L_WHT</option>
+                    <option>DRESS_015_S_RED</option>
+                    <option>JEANS_007_M_IND</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Pincode</label>
+                  <select class="form-control" id="fc-pincode">
+                    <option value="400001">400001 → Fort, Mumbai</option>
+                    <option value="400002">400002 → Kalbadevi</option>
+                    <option value="400003">400003 → Mandvi</option>
+                    <option value="400004">400004 → Girgaon</option>
+                    <option value="400005">400005 → Colaba</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Horizon</label>
+                  <select class="form-control" id="fc-hours">
+                    <option value="24">24 hours</option>
+                    <option value="48" selected>48 hours</option>
+                    <option value="72">72 hours</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary" id="btn-forecast"><i data-lucide="bar-chart-2"></i> Generate Forecast</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header">
+              <h3><i data-lucide="line-chart"></i> Forecast Chart</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container" style="height: 320px;">
+                <canvas id="forecast-chart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="forecast-metrics">
+            <div class="forecast-metric-card">
+              <div class="fm-value" id="fc-mape">11.4%</div>
+              <div class="fm-label">MAPE (Mean Absolute % Error)</div>
+            </div>
+            <div class="forecast-metric-card">
+              <div class="fm-value" id="fc-rmse">2.27</div>
+              <div class="fm-label">RMSE (Root Mean Squared Error)</div>
+            </div>
+            <div class="forecast-metric-card">
+              <div class="fm-value" id="fc-peak">2.08</div>
+              <div class="fm-label">Peak Hour Demand (units)</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════ PAGE: INVENTORY ═══════════ -->
+        <section id="page-inventory" class="page">
+          <div class="page-header">
+            <div>
+              <h1>Inventory Overview</h1>
+              <p class="subtitle">Real-time stock levels across all micro-warehouses</p>
+            </div>
+            <div class="actions">
+              <button class="btn btn-secondary" id="btn-refresh-inv"><i data-lucide="refresh-cw"></i> Refresh</button>
+            </div>
+          </div>
+
+          <div class="inventory-grid" id="warehouse-cards">
+            <!-- Warehouse cards added by JS -->
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i data-lucide="database"></i> Stock Levels by SKU × Warehouse</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <table class="data-table" id="inventory-table">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>W1 (Fort)</th>
+                    <th>W2 (Kalbadevi)</th>
+                    <th>W3 (Mandvi)</th>
+                    <th>W4 (Girgaon)</th>
+                    <th>W5 (Colaba)</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-tbody">
+                  <!-- Rows added by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════ PAGE: AUTO-RESTOCK ═══════════ -->
+        <section id="page-auto-restock" class="page">
+          <div class="page-header">
+            <div>
+              <h1>Automatic Restocking System</h1>
+              <p class="subtitle">Live inventory monitoring and autonomous restock execution</p>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" id="btn-manual-restock"><i data-lucide="refresh-cw"></i> Manual Restock Check</button>
+            </div>
+          </div>
+
+          <div class="status-grid">
+            <div class="status-card">
+              <div class="status-value"><span class="running-badge">RUNNING</span></div>
+              <div class="status-label" style="margin-top: 14px;">System Status</div>
+            </div>
+            <div class="status-card">
+              <div class="status-value">20 units</div>
+              <div class="status-label">Restock Threshold</div>
+            </div>
+            <div class="status-card">
+              <div class="status-value">5 min</div>
+              <div class="status-label">Check Interval</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i data-lucide="scroll-text"></i> Restocking Activity Log</h3>
+              <span class="view-all-link" style="font-size: 0.78rem; color: var(--text-dim);" id="restock-last-scan">Last scanned: <span></span></span>
+            </div>
+            <div class="card-body">
+              <div class="activity-log" id="restock-log">
+                <!-- Log entries added by JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════ PAGE: AGENT ═══════════ -->
+        <section id="page-agent" class="page">
+          <div class="page-header">
+            <div>
+              <h1>Orchestration Agent</h1>
+              <p class="subtitle">Autonomous ReAct-based inventory rebalancing agent</p>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" id="btn-run-agent"><i data-lucide="play"></i> Run Cycle</button>
+            </div>
+          </div>
+
+          <div class="agent-status-panel">
+            <div class="agent-state">
+              <div class="agent-avatar">🤖</div>
+              <div class="agent-name">Inventory Agent</div>
+              <div class="agent-mode">Active — Monitoring</div>
+              <div class="agent-stats">
+                <div class="agent-stat-item">
+                  <div class="stat-num" id="agent-cycles">47</div>
+                  <div class="stat-label">Cycles</div>
+                </div>
+                <div class="agent-stat-item">
+                  <div class="stat-num" id="agent-transfers">156</div>
+                  <div class="stat-label">Transfers</div>
+                </div>
+                <div class="agent-stat-item">
+                  <div class="stat-num" id="agent-sla">97%</div>
+                  <div class="stat-label">SLA</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="max-height: 400px; overflow-y: auto;">
+              <div class="card-header">
+                <h3><i data-lucide="brain"></i> Decision Log</h3>
+                <span class="live-badge">Live</span>
+              </div>
+              <div class="agent-feed" id="agent-decision-log">
+                <!-- Decision entries added by JS -->
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i data-lucide="arrow-left-right"></i> Recent Transfers</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <table class="data-table" id="transfers-table">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Qty</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                  </tr>
+                </thead>
+                <tbody id="transfers-tbody">
+                  <!-- Transfer rows added by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════ PAGE: SETTINGS ═══════════ -->
+        <section id="page-settings" class="page">
+          <div class="page-header">
+            <div>
+              <h1>Settings</h1>
+              <p class="subtitle">System configuration and preferences</p>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>🤖 AI Models</h3>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Recommendation Engine</h4>
+                <p>FashionCLIP (patrickjohncyh/fashion-clip) + FAISS IndexFlatIP</p>
+              </div>
+              <div class="toggle active"></div>
+            </div>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Demand Forecasting</h4>
+                <p>Facebook Prophet with weather + contextual regressors</p>
+              </div>
+              <div class="toggle active"></div>
+            </div>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Inventory Agent</h4>
+                <p>ReAct-based rule engine — no external LLM needed</p>
+              </div>
+              <div class="toggle active"></div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>📦 Inventory Configuration</h3>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Reorder Threshold</h4>
+                <p>Minimum stock before triggering restock</p>
+              </div>
+              <span style="color: var(--cyan); font-weight: 600;">10 units</span>
+            </div>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Max Stock Per SKU</h4>
+                <p>Maximum warehouse capacity per product</p>
+              </div>
+              <span style="color: var(--cyan); font-weight: 600;">100 units</span>
+            </div>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>SLA Target</h4>
+                <p>60-minute delivery promise</p>
+              </div>
+              <span style="color: var(--green); font-weight: 600;">60 min</span>
+            </div>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Transfer Cost</h4>
+                <p>Per-unit inter-warehouse transfer cost</p>
+              </div>
+              <span style="color: var(--orange); font-weight: 600;">₹5.00</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>🌍 Coverage Areas</h3>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Active Pin Codes</h4>
+                <p>400001 (Fort), 400002 (Kalbadevi), 400003 (Mandvi), 400004 (Girgaon), 400005 (Colaba)</p>
+              </div>
+              <span style="color: var(--text-muted); font-weight: 500;">5 zones</span>
+            </div>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Warehouses</h4>
+                <p>W1–W5 mapped to their respective pin codes</p>
+              </div>
+              <span style="color: var(--text-muted); font-weight: 500;">5 active</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>📊 Data Sources</h3>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Product Dataset</h4>
+                <p>Kaggle Fashion Product Images (Small) — 44K products</p>
+              </div>
+              <span style="color: var(--green); font-size: 0.82rem;">✓ Loaded</span>
+            </div>
+            <div class="settings-row">
+              <div class="setting-info">
+                <h4>Weather API</h4>
+                <p>Open-Meteo (free, no key required)</p>
+              </div>
+              <span style="color: var(--green); font-size: 0.82rem;">✓ Connected</span>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- end page-content -->
+    </div><!-- end main-content -->
+  </div><!-- end app-layout -->
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
